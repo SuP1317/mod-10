@@ -36,7 +36,7 @@ const display = () => {
     fruitsList.innerHTML = '';
     
     
-    const   = {
+    const colorClassMap  = {
         'фиолетовый': 'fruit_violet',
         'зеленый': 'fruit_green',
         'розово-красный': 'fruit_carmazin',
@@ -51,7 +51,7 @@ const display = () => {
         li.className = 'fruit__item';
         
 
-        const colorClass = colorToClassMap[fruit.color];
+        const colorClass = colorClassMap[fruit.color];
         if (colorClass) {
             li.classList.add(colorClass);
         }
