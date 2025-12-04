@@ -26,53 +26,54 @@ let fruitsJSON = `[
 let allFruits = JSON.parse(fruitsJSON);
 let fruits = JSON.parse(fruitsJSON);
 
+
+
 /*** ОТОБРАЖЕНИЕ ***/
 
 
-const display = () => {
-  // Очищаем fruitsList от вложенных элементов
-  while (fruitsList.firstChild) {
-    fruitsList.removeChild(fruitsList.firstChild);
-  }
 
-  for (let i = 0; i < fruits.length; i++) {
-    // Создаем элемент <li>
-    const li = document.createElement('li');
-    li.className = 'fruit__item';
+const display = () => {
+    fruitsList.innerHTML = '';
     
-    // Добавляем класс в зависимости от цвета
-    const colorClass = fruits[i].color.replace(/\s+/g, '-').toLowerCase();
-    li.classList.add(`fruit_${colorClass}`);
     
-    // Создаем элемент для информации о фрукте
-    const fruitInfo = document.createElement('div');
-    fruitInfo.className = 'fruit__info';
+    const   = {
+        'фиолетовый': 'fruit_violet',
+        'зеленый': 'fruit_green',
+        'розово-красный': 'fruit_carmazin',
+        'желтый': 'fruit_yellow',
+        'светло-коричневый': 'fruit_lightbrown',
+        'красный': 'fruit_carmazin',
+        'коричневый': 'fruit_lightbrown'
+    };
     
-    // Создаем и добавляем информацию
-    const indexDiv = document.createElement('div');
-    indexDiv.textContent = `index: ${i}`;
-    
-    const kindDiv = document.createElement('div');
-    kindDiv.textContent = `kind: ${fruits[i].kind}`;
-    
-    const colorDiv = document.createElement('div');
-    colorDiv.textContent = `color: ${fruits[i].color}`;
-    
-    const weightDiv = document.createElement('div');
-    weightDiv.textContent = `weight (кг): ${fruits[i].weight}`;
-    
-   
-    fruitInfo.appendChild(indexDiv);
-    fruitInfo.appendChild(kindDiv);
-    fruitInfo.appendChild(colorDiv);
-    fruitInfo.appendChild(weightDiv);
-    li.appendChild(fruitInfo);
-    fruitsList.appendChild(li);
-  }
+    fruits.forEach((fruit, i) => {
+        const li = document.createElement('li');
+        li.className = 'fruit__item';
+        
+
+        const colorClass = colorToClassMap[fruit.color];
+        if (colorClass) {
+            li.classList.add(colorClass);
+        }
+        
+        li.innerHTML = `
+            <div class="fruit__info">
+                <div>index: ${i}</div>
+                <div>kind: ${fruit.kind}</div>
+                <div>color: ${fruit.color}</div>
+                <div>weight (кг): ${fruit.weight}</div>
+            </div>
+        `;
+        
+        fruitsList.appendChild(li);
+    });
 };
 
 
 display();
+
+
+
 
 /*** ПЕРЕМЕШИВАНИЕ ***/
 
@@ -171,23 +172,9 @@ const comparationColor = (a, b) => {
   return a.color.localeCompare(b.color);
 };
 
-const sortAPI = {
-  bubbleSort(arr, comparation) {
-    const array = [...arr];
-    const n = array.length;
-    for (let i = 0; i < n - 1; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        if (comparation(array[j], array[j + 1]) > 0) {
-          [array[j], array[j + 1]] = [array[j + 1], array[j]];
-        }
-      }
-    }
-    return array;
-  },
-
-  quickSort(arr, comparation) {
+function quickSort(arr, comparation) {
     if (arr.length <= 1) {
-      return arr;
+        return arr;
     }
     
     const pivot = arr[Math.floor(arr.length / 2)];
@@ -196,27 +183,47 @@ const sortAPI = {
     const equal = [];
     
     for (let element of arr) {
-      const cmp = comparation(element, pivot);
-      if (cmp < 0) {
-        left.push(element);
-      } else if (cmp > 0) {
-        right.push(element);
-      } else {
-        equal.push(element);
-      }
+        const cmp = comparation(element, pivot);
+        if (cmp < 0) {
+            left.push(element);
+        } else if (cmp > 0) {
+            right.push(element);
+        } else {
+            equal.push(element);
+        }
     }
     
-    return [...this.quickSort(left, comparation), ...equal, ...this.quickSort(right, comparation)];
-  },
+    return [...quickSort(left, comparation), ...equal, ...quickSort(right, comparation)];
+}
 
-  startSort(sort, arr, comparation) {
-    const start = new Date().getTime();
-    const sortedArray = sort(arr, comparation);
-    const end = new Date().getTime();
-    sortTime = `${end - start} ms`;
-    return sortedArray;
-  },
+const sortAPI = {
+    bubbleSort(arr, comparation) {
+        const array = [...arr];
+        const n = array.length;
+        for (let i = 0; i < n - 1; i++) {
+            for (let j = 0; j < n - i - 1; j++) {
+                if (comparation(array[j], array[j + 1]) > 0) {
+                    [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                }
+            }
+        }
+        return array;
+    },
+
+   
+    quickSort: quickSort,
+
+    startSort(sort, arr, comparation) {
+        const start = new Date().getTime();
+        const sortedArray = sort(arr, comparation);
+        const end = new Date().getTime();
+        sortTime = `${end - start} ms`;
+        return sortedArray;
+    },
 };
+
+
+
 
 
 sortKindLabel.textContent = sortKind;
